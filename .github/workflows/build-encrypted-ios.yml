@@ -1,0 +1,130 @@
+name: Build encrypted final iOS
+
+on:
+  push:
+    branches:
+      - encrypted-build
+
+permissions:
+  contents: write
+
+jobs:
+  ios:
+    if: github.event.head_commit.message == 'Start encrypted iOS build'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: encrypted-build
+
+      - name: Create ephemeral builder handshake
+        run: |
+          set -euo pipefail
+          KEY="/tmp/daftar-builder-ephemeral.pem"
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out "$KEY"
+          chmod 600 "$KEY"
+          openssl rsa -in "$KEY" -noout -modulus | sed 's/^Modulus=//' > live-builder-modulus.hex
+          printf '%s\n' '65537' > live-builder-exponent.txt
+          git config user.name "Daftar IPA Builder"
+          git config user.email "builder@localhost"
+          git add live-builder-modulus.hex live-builder-exponent.txt
+          git commit -m "[builder-handshake] publish ephemeral public key"
+          git push origin HEAD:encrypted-build
+
+      - name: Receive wrapped one-time build key
+        run: |
+          set -euo pipefail
+          FOUND=0
+          for i in {1..120}; do
+            git fetch -q origin encrypted-build
+            if git show origin/encrypted-build:wrapped-key-live.hex > /tmp/wrapped-key-live.hex 2>/dev/null; then
+              FOUND=1
+              break
+            fi
+            sleep 5
+          done
+          test "$FOUND" = "1"
+          xxd -r -p /tmp/wrapped-key-live.hex > /tmp/wrapped-key-live.bin
+          openssl pkeyutl -decrypt -inkey /tmp/daftar-builder-ephemeral.pem -pkeyopt rsa_padding_mode:pkcs1 -in /tmp/wrapped-key-live.bin -out /tmp/build-key.bin
+          KEY_HEX="$(xxd -p -c 256 /tmp/build-key.bin)"
+          test "${#KEY_HEX}" -eq 64
+          echo "::add-mask::$KEY_HEX"
+          python3 decrypt_payload.py "$KEY_HEX"
+          rm -f /tmp/wrapped-key-live.hex /tmp/wrapped-key-live.bin /tmp/build-key.bin /tmp/daftar-builder-ephemeral.pem
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate iOS shell
+        working-directory: source
+        run: |
+          flutter create --platforms=ios --org com.void --project-name daftr_qarz .
+          rm -f test/widget_test.dart
+
+      - name: Restore legacy iOS identity
+        working-directory: source
+        run: |
+          set -euo pipefail
+          PBXPROJ="ios/Runner.xcodeproj/project.pbxproj"
+          PLIST="ios/Runner/Info.plist"
+          ENTITLEMENTS="ios/Runner/Runner.entitlements"
+          FIREBASE_PLIST="firebase/GoogleService-Info.plist"
+          test -f "$FIREBASE_PLIST"
+          plutil -lint "$FIREBASE_PLIST"
+          perl -0pi -e 's/PRODUCT_BUNDLE_IDENTIFIER = com\.void\.daftrQarz;/PRODUCT_BUNDLE_IDENTIFIER = com.void.daftarQarz;/g; s/PRODUCT_BUNDLE_IDENTIFIER = com\.void\.daftr_qarz;/PRODUCT_BUNDLE_IDENTIFIER = com.void.daftarQarz;/g' "$PBXPROJ"
+          perl -0pi -e 's/(PRODUCT_BUNDLE_IDENTIFIER = com\.void\.daftarQarz;)/$1\n\t\t\t\tCODE_SIGN_ENTITLEMENTS = Runner\/Runner.entitlements;\n\t\t\t\tDEVELOPMENT_TEAM = TJSRQ2GZMU;/g' "$PBXPROJ"
+          perl -0pi -e 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]+;/IPHONEOS_DEPLOYMENT_TARGET = 15.5;/g' "$PBXPROJ"
+          if ! grep -q 'NSFaceIDUsageDescription' "$PLIST"; then
+            perl -0pi -e 's#</dict>#\t<key>NSFaceIDUsageDescription</key>\n\t<string>Why is my app authenticating using face id? locked app </string>\n</dict>#' "$PLIST"
+          fi
+          /usr/libexec/PlistBuddy -c 'Add :UIBackgroundModes array' "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c 'Add :UIBackgroundModes:0 string fetch' "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c 'Add :UIBackgroundModes:1 string remote-notification' "$PLIST" 2>/dev/null || true
+          cat > "$ENTITLEMENTS" <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict><key>aps-environment</key><string>production</string></dict></plist>
+          EOF
+          cp "$FIREBASE_PLIST" ios/Runner/GoogleService-Info.plist
+
+      - name: Get dependencies
+        working-directory: source
+        run: flutter pub get
+
+      - name: Analyze source
+        working-directory: source
+        run: flutter analyze --no-fatal-warnings --no-fatal-infos
+
+      - name: Build unsigned iOS
+        working-directory: source
+        run: flutter build ios --release --no-codesign --no-tree-shake-icons --build-name=0.2.7 --build-number=25
+
+      - name: Restore canonical static bundle and verify
+        working-directory: source
+        run: |
+          set -euo pipefail
+          unzip -oq ../native/ios/canonical-static-overlay.zip -d build/ios/iphoneos/Runner.app
+          cp firebase/GoogleService-Info.plist build/ios/iphoneos/Runner.app/GoogleService-Info.plist
+          APP="build/ios/iphoneos/Runner.app"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")" = 'com.void.daftarQarz'
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")" = '0.2.7'
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Info.plist")" = '25'
+
+      - name: Package IPA
+        working-directory: source
+        run: |
+          set -euo pipefail
+          mkdir -p build/final-ipa/Payload build/ipa-output
+          cp -R build/ios/iphoneos/Runner.app build/final-ipa/Payload/Runner.app
+          cp ios/Runner/Runner.entitlements build/ipa-output/Daftarqarzsafeen.entitlements.plist
+          (cd build/final-ipa && zip -qry ../ipa-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa Payload)
+          shasum -a 256 build/ipa-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa | tee build/ipa-output/SHA256.txt
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Daftarqarzsafeen-0.2.7-build25-final
+          path: source/build/ipa-output/
+          if-no-files-found: error

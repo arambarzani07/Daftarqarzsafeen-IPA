@@ -1,0 +1,44 @@
+name: Bootstrap macOS encrypted builder key
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore macOS builder key
+        id: keycache
+        uses: actions/cache/restore@v4
+        with:
+          path: .builder-private.pem
+          key: daftarqarzsafeen-builder-rsa-macos-v1
+      - name: Generate macOS builder key
+        if: steps.keycache.outputs.cache-hit != 'true'
+        run: |
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out .builder-private.pem
+          chmod 600 .builder-private.pem
+      - name: Save macOS builder key
+        if: steps.keycache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .builder-private.pem
+          key: daftarqarzsafeen-builder-rsa-macos-v1
+      - name: Publish public modulus only
+        run: |
+          set -euo pipefail
+          openssl rsa -in .builder-private.pem -noout -modulus | sed 's/^Modulus=//' > builder-macos-modulus.hex
+          printf '%s\n' '65537' > builder-macos-exponent.txt
+          git config user.name "Encrypted Builder Bootstrap"
+          git config user.email "builder@localhost"
+          git add builder-macos-modulus.hex builder-macos-exponent.txt
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish macOS encrypted builder public key"
+            git push origin HEAD:main
+          fi

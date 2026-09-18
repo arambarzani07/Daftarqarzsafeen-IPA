@@ -1,0 +1,59 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 28,
+      "path": "source/lib/models/legacy_user.dart",
+      "blob": "encrypted/0028.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000001c",
+      "tag": "f9e838d4fc048008a902b9c1d8cbdf7db05aac52d0038ada6a833268071cd09f",
+      "size": 798
+    },
+    {
+      "index": 29,
+      "path": "source/lib/models/local_backup_snapshot.dart",
+      "blob": "encrypted/0029.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000001d",
+      "tag": "4b2f00b3724dcae493c5d68348d4f2d1a7b2fb6d4dad4b197a235cfbfea30b9b",
+      "size": 2473
+    },
+    {
+      "index": 30,
+      "path": "source/lib/models/notification_preferences.dart",
+      "blob": "encrypted/0030.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000001e",
+      "tag": "ee037f341a5bc946c386fe63230c5fd627ba96476a3d9c5c27b7c2fb5277d647",
+      "size": 2560
+    },
+    {
+      "index": 31,
+      "path": "source/lib/models/payment_promise.dart",
+      "blob": "encrypted/0031.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000001f",
+      "tag": "d80d8392a060c50c8574447b09b1232ec740fbf8bf3cf7ae42d00ac24c2485f2",
+      "size": 6245
+    },
+    {
+      "index": 32,
+      "path": "source/lib/models/public_loan_details.dart",
+      "blob": "encrypted/0032.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000020",
+      "tag": "e6e459ac2bb733a37ddf4c820c217efdd3dd09fcdd8fe165464f15c182e8a133",
+      "size": 5032
+    },
+    {
+      "index": 33,
+      "path": "source/lib/models/runtime_config.dart",
+      "blob": "encrypted/0033.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000021",
+      "tag": "099f595edcb4d0afe998bc30bb0c1f61e1b124fd8c7fa36c8ca6ce9e21510ca4",
+      "size": 7014
+    }
+  ]
+}

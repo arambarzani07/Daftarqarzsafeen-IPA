@@ -1,0 +1,41 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 0,
+      "path": "native/ios/canonical-static-overlay.zip",
+      "blob": "encrypted/0000.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000000",
+      "tag": "bd985ce6ff5c0ea94082a9b17f3811fe2b82646fdfd0e57740b0b6e6cc217b35",
+      "size": 404884
+    },
+    {
+      "index": 1,
+      "path": "source/assets/fonts/IconlyBold.ttf",
+      "blob": "encrypted/0001.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000001",
+      "tag": "605dd844a40707300ab3cc6356c7290438fe97068c0826470122dd5f5a98817a",
+      "size": 24008
+    },
+    {
+      "index": 2,
+      "path": "source/assets/fonts/IconlyBroken.ttf",
+      "blob": "encrypted/0002.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000002",
+      "tag": "84b67390718dd78e09fac63ac4be2501ab5a89dc8b0b925d1c718df3975d3fe7",
+      "size": 34684
+    },
+    {
+      "index": 3,
+      "path": "source/assets/fonts/IconlyLight.ttf",
+      "blob": "encrypted/0003.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000003",
+      "tag": "21b6e9790d7f58d1d0669205e2290de85ab4e133dba763698dd12d917d8bb521",
+      "size": 6028
+    }
+  ]
+}

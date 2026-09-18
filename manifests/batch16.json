@@ -1,0 +1,32 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 82,
+      "path": "source/lib/widgets/home_totals_panel.dart",
+      "blob": "encrypted/0082.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000052",
+      "tag": "0f751e1175ba7283841f5e0bb4076c9530dbae7098512a823f99be42efc1aafa",
+      "size": 6711
+    },
+    {
+      "index": 83,
+      "path": "source/lib/widgets/trial_alert_widget.dart",
+      "blob": "encrypted/0083.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000053",
+      "tag": "a16aa0823e8d561a9424ad2f5c980309d834f4d099bd96e96c3f2078c24528db",
+      "size": 5726
+    },
+    {
+      "index": 84,
+      "path": "source/pubspec.yaml",
+      "blob": "encrypted/0084.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000054",
+      "tag": "ead3f0811bfa9ebe07de9cba20516063ad700671b3381c14a9de1c522d7ed7ef",
+      "size": 1296
+    }
+  ]
+}

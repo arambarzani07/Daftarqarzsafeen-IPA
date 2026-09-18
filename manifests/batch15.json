@@ -1,0 +1,59 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 76,
+      "path": "source/lib/state/reminder_controller.dart",
+      "blob": "encrypted/0076.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000004c",
+      "tag": "c303d2690c7b1923736cd978f453ec0a0b28a80222ceaa35f5832ce2dca7d1f0",
+      "size": 5968
+    },
+    {
+      "index": 77,
+      "path": "source/lib/state/session_controller.dart",
+      "blob": "encrypted/0077.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000004d",
+      "tag": "619755640caf05d840c08681738c7fe31c9e39a86090cad823c5954327b6f1be",
+      "size": 2546
+    },
+    {
+      "index": 78,
+      "path": "source/lib/web/web_loadn_detail_screen.dart",
+      "blob": "encrypted/0078.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000004e",
+      "tag": "7bb8fd0e0ca3cad3c859de80992e501818127bab936864908ab625f9d182fddf",
+      "size": 10891
+    },
+    {
+      "index": 79,
+      "path": "source/lib/widget/app/shimmer_widget.dart",
+      "blob": "encrypted/0079.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000004f",
+      "tag": "a67c30213bb7bd0d6e8e58dbbde0a8ca0cf4e8f3f93d67f011a938e8b82bcbff",
+      "size": 2951
+    },
+    {
+      "index": 80,
+      "path": "source/lib/widget/main_screen/add_loan_firest_time.widget.dart",
+      "blob": "encrypted/0080.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000050",
+      "tag": "9c0cb702e4e0e32555eaefc80ea0b9a07fe61a1d231c925dede3835ddda02610",
+      "size": 1103
+    },
+    {
+      "index": 81,
+      "path": "source/lib/widgets/amount_card.dart",
+      "blob": "encrypted/0081.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000051",
+      "tag": "926a8a463f45571bb8e88c15dff46622289ddb10f3da27d2c57ca4d731ef4465",
+      "size": 1803
+    }
+  ]
+}

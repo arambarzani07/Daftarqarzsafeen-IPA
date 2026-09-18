@@ -1,0 +1,59 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 70,
+      "path": "source/lib/state/app_settings_controller.dart",
+      "blob": "encrypted/0070.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000046",
+      "tag": "a02b4e20146190586fa394d60ba3013426f6f30980472213f1b260a97b2b0059",
+      "size": 1985
+    },
+    {
+      "index": 71,
+      "path": "source/lib/state/configure_controller.dart",
+      "blob": "encrypted/0071.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000047",
+      "tag": "53addeba8b585f9aa97f39844f92bb1d2c4e07500947cd49d7281fb3e6e25aaa",
+      "size": 1105
+    },
+    {
+      "index": 72,
+      "path": "source/lib/state/loan_controller.dart",
+      "blob": "encrypted/0072.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000048",
+      "tag": "e11beede2980c74f92e8e98b509c6ff614c3ea884d41ac9d29a32c61e8b73e61",
+      "size": 2967
+    },
+    {
+      "index": 73,
+      "path": "source/lib/state/messaging_controller.dart",
+      "blob": "encrypted/0073.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000049",
+      "tag": "7c9066385c2943879eff45653042ebe28297e08a627f719c5fced252621a4ffa",
+      "size": 6125
+    },
+    {
+      "index": 74,
+      "path": "source/lib/state/notification_preferences_controller.dart",
+      "blob": "encrypted/0074.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000004a",
+      "tag": "c4525e4a0159a64e31ccfee0db3a21c083173031ba87000575c87678e468e81a",
+      "size": 2757
+    },
+    {
+      "index": 75,
+      "path": "source/lib/state/payment_promise_controller.dart",
+      "blob": "encrypted/0075.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000004b",
+      "tag": "dd4420e1806d96dae3318fc5f719250f5c6d201cc7efd70ddc1cd4b8c5b8371e",
+      "size": 8137
+    }
+  ]
+}

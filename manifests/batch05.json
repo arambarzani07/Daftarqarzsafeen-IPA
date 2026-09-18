@@ -1,0 +1,41 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 20,
+      "path": "source/lib/localization/app_localizations.dart",
+      "blob": "encrypted/0020.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000014",
+      "tag": "0dffe71e85bad75240172d8ba9aeda989eea1a566858cd8230a43b223a585d91",
+      "size": 2031
+    },
+    {
+      "index": 21,
+      "path": "source/lib/main.dart",
+      "blob": "encrypted/0021.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000015",
+      "tag": "5ef09d1890aefc3b383a6172970e12435f9636758b0a0b0e8f4924b0ec71fe5c",
+      "size": 13632
+    },
+    {
+      "index": 22,
+      "path": "source/lib/models/audit_log_entry.dart",
+      "blob": "encrypted/0022.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000016",
+      "tag": "ce7b0a558ea66907a5a5f499563beb0e76b67792cdeb1214dacb1f410c2bc224",
+      "size": 4382
+    },
+    {
+      "index": 23,
+      "path": "source/lib/models/contact.dart",
+      "blob": "encrypted/0023.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000017",
+      "tag": "272a0616aea912d51472f5ef4ebda4bac93d16b496abfae0fa44e740dd42bc3b",
+      "size": 864
+    }
+  ]
+}

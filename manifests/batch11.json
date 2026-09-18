@@ -1,0 +1,59 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 52,
+      "path": "source/lib/screens/sign_up_screen.dart",
+      "blob": "encrypted/0052.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000034",
+      "tag": "dd24a16726984177a1dfeab5427b25deb144ddf6d3173f9c702eaad2bafe66dc",
+      "size": 4643
+    },
+    {
+      "index": 53,
+      "path": "source/lib/screens/splash_screen.dart",
+      "blob": "encrypted/0053.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000035",
+      "tag": "32ee175fdbd8293bf7c81ae77a660f4d712ff29f2be060bc0ab11b051fd8ba84",
+      "size": 1400
+    },
+    {
+      "index": 54,
+      "path": "source/lib/screens/transaction_search_screen.dart",
+      "blob": "encrypted/0054.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000036",
+      "tag": "cf457ca6c7f5f1d5661ee28b41cd96ce567645afdb35e0e6b87ade4ba0b617dc",
+      "size": 16369
+    },
+    {
+      "index": 55,
+      "path": "source/lib/screens/update_screen.dart",
+      "blob": "encrypted/0055.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000037",
+      "tag": "9ddb3f5b57343b24dc4b4ced01abab6915f2ac4da669d31e8101e2ce3083b786",
+      "size": 3096
+    },
+    {
+      "index": 56,
+      "path": "source/lib/services/audit_log_store.dart",
+      "blob": "encrypted/0056.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000038",
+      "tag": "1555401427a0110b786940eee6baffb9cc1aa0cf0a93623be314bb1045745942",
+      "size": 2870
+    },
+    {
+      "index": 57,
+      "path": "source/lib/services/auth_service.dart",
+      "blob": "encrypted/0057.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000039",
+      "tag": "462a4f177f5b8551ac10c0ccb7942eb2c07461409b393b2fecdcb663b1eb9731",
+      "size": 10576
+    }
+  ]
+}

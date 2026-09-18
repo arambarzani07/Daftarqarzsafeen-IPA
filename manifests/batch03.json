@@ -1,0 +1,41 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 12,
+      "path": "source/assets/svg/eye_show.svg",
+      "blob": "encrypted/0012.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000000c",
+      "tag": "b3248f955667e50ae0a7e5e007de3e577d579a53bc776b8efb4cdf2671f0d100",
+      "size": 1231
+    },
+    {
+      "index": 13,
+      "path": "source/assets/svg/moon_dark.svg",
+      "blob": "encrypted/0013.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000000d",
+      "tag": "74703bc938efa01c48cdfb3a5e2b82f4f5322db381eaf1ceee14377e8d8e0085",
+      "size": 495
+    },
+    {
+      "index": 14,
+      "path": "source/assets/svg/moon_light.svg",
+      "blob": "encrypted/0014.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000000e",
+      "tag": "162a8395908b037b351a0619f32e109cc3d22df01b10842d681d6e6bb0abc303",
+      "size": 495
+    },
+    {
+      "index": 15,
+      "path": "source/assets/svg/sun_dark.svg",
+      "blob": "encrypted/0015.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000000f",
+      "tag": "3ca32327f0838dc3402e0ab0fba4de6e8b9dcfd0801043b27db34257d9da0cc4",
+      "size": 2690
+    }
+  ]
+}

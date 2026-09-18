@@ -1,0 +1,41 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 24,
+      "path": "source/lib/models/debt_reminder.dart",
+      "blob": "encrypted/0024.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000018",
+      "tag": "b55d800b03ec900c5da176b1c8937ed9a37e2e4f9695f6240e512e747e9fcd35",
+      "size": 6451
+    },
+    {
+      "index": 25,
+      "path": "source/lib/models/fib_payment.dart",
+      "blob": "encrypted/0025.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000019",
+      "tag": "354284e08ae841212d54948ce1199f5d8c28c6fe98c2e60b14385752ceecd1c8",
+      "size": 2592
+    },
+    {
+      "index": 26,
+      "path": "source/lib/models/ledger_totals.dart",
+      "blob": "encrypted/0026.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000001a",
+      "tag": "8036d3002e76becdeeb5821ea8bdb078840479b176b1209107daa78ab266a81f",
+      "size": 6385
+    },
+    {
+      "index": 27,
+      "path": "source/lib/models/ledger_transaction.dart",
+      "blob": "encrypted/0027.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000001b",
+      "tag": "7d4b4fb5aaea30bc9f8d9b7a2ad89230973391bde469460b6dc9c7f4d27a2102",
+      "size": 1993
+    }
+  ]
+}

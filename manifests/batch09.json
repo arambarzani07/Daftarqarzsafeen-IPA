@@ -1,0 +1,59 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 40,
+      "path": "source/lib/screens/error_screen.dart",
+      "blob": "encrypted/0040.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000028",
+      "tag": "53e3bcd2dd7f48e4d048113fdea4805cc9bf75b00de7da4de3708447b7ba0610",
+      "size": 2995
+    },
+    {
+      "index": 41,
+      "path": "source/lib/screens/expire_screen.dart",
+      "blob": "encrypted/0041.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000029",
+      "tag": "cd6eaf5e32b2867ade6d72b6c81898721c7782a8813cafc7e457cb90f2037cc0",
+      "size": 8251
+    },
+    {
+      "index": 42,
+      "path": "source/lib/screens/fib_payment_screen.dart",
+      "blob": "encrypted/0042.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000002a",
+      "tag": "3a5fe373d66bdb28ecd3605a81f4d1b91924b64fd2dd0e3f42ea56177efc6fe5",
+      "size": 18924
+    },
+    {
+      "index": 43,
+      "path": "source/lib/screens/loan_detail_screen.dart",
+      "blob": "encrypted/0043.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000002b",
+      "tag": "e423bf1faf5f9938569914cb0b877e81bf7e5d4ce81750b4f12f2b7e1abe071f",
+      "size": 22890
+    },
+    {
+      "index": 44,
+      "path": "source/lib/screens/loan_statement_screen.dart",
+      "blob": "encrypted/0044.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000002c",
+      "tag": "4e63be381ddaf2c8ee7c1dcc2bf978c6bfafc7e4966f856564aea669e6133134",
+      "size": 12551
+    },
+    {
+      "index": 45,
+      "path": "source/lib/screens/main_screen.dart",
+      "blob": "encrypted/0045.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000002d",
+      "tag": "6449ce17755f0cb8ebef35270fa24a7bb8a3ef451c2777da6ff476bbf6464d89",
+      "size": 39946
+    }
+  ]
+}

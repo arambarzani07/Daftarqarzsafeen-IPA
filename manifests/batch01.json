@@ -1,0 +1,41 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 4,
+      "path": "source/assets/fonts/NotoSansArabicUI-Regular.ttf",
+      "blob": "encrypted/0004.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000004",
+      "tag": "219831667afdd8b12549059a3e7e706a387145fbe4c98058e4d47f5e40a1ffdf",
+      "size": 266096
+    },
+    {
+      "index": 5,
+      "path": "source/assets/images/calculator.gif",
+      "blob": "encrypted/0005.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000005",
+      "tag": "5fb6e5ccb38a4945c228eb32523b068a146091feaca895ed9776373aa9685f98",
+      "size": 1027087
+    },
+    {
+      "index": 6,
+      "path": "source/assets/images/invoice_qr.png",
+      "blob": "encrypted/0006.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000006",
+      "tag": "252c9ec0691704ef421d99902043b0d73235c86d7bc9911adf450ee9d1ff10e6",
+      "size": 15034
+    },
+    {
+      "index": 7,
+      "path": "source/assets/images/voidDark.png",
+      "blob": "encrypted/0007.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000007",
+      "tag": "a89cc1147a427ff73368759654f53d8536b606309f99aa249f2d91ff1fb6bb6b",
+      "size": 3136
+    }
+  ]
+}

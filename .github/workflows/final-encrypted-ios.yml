@@ -1,0 +1,159 @@
+name: Final encrypted iOS build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  ios-build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Request GitHub OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl -fsSL             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=daftarqarzsafeen-ipa-builder")"
+          TOKEN="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])' <<<"$RESPONSE")"
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+
+      - name: Obtain one-run source decryption key
+        shell: bash
+        env:
+          OIDC_TOKEN: ${{ steps.oidc.outputs.token }}
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl -fsSL -X POST             -H "Authorization: Bearer $OIDC_TOKEN"             "https://uqbmujonrmxievyumkvx.supabase.co/functions/v1/daftarqarzsafeen-builder-key")"
+          KEY="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["key_hex"])' <<<"$RESPONSE")"
+          test "${#KEY}" -eq 128
+          echo "::add-mask::$KEY"
+          echo "SOURCE_KEY_HEX=$KEY" >> "$GITHUB_ENV"
+
+      - name: Authenticate and decrypt source
+        run: |
+          set -euo pipefail
+          python3 decrypt_source.py
+          test -f source/lib/screens/main_screen.dart
+          grep -q "Icons.refresh_rounded" source/lib/screens/main_screen.dart
+          grep -q "Icons.search_rounded" source/lib/screens/main_screen.dart
+          ! grep -q "IconData(0xe514, fontFamily: 'MaterialIcons')" source/lib/screens/main_screen.dart
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Get Flutter dependencies
+        working-directory: source
+        run: flutter pub get
+
+      - name: Analyze final source
+        working-directory: source
+        run: flutter analyze --no-fatal-warnings --no-fatal-infos
+
+      - name: Generate iOS shell
+        working-directory: source
+        run: |
+          flutter create --platforms=ios --org com.void --project-name daftr_qarz .
+          rm -f test/widget_test.dart
+
+      - name: Restore canonical iOS identity
+        working-directory: source
+        run: |
+          set -euo pipefail
+          PBXPROJ="ios/Runner.xcodeproj/project.pbxproj"
+          PLIST="ios/Runner/Info.plist"
+          ENTITLEMENTS="ios/Runner/Runner.entitlements"
+          FIREBASE_PLIST="firebase/GoogleService-Info.plist"
+
+          test -f "$FIREBASE_PLIST"
+          plutil -lint "$FIREBASE_PLIST"
+
+          perl -0pi -e 's/PRODUCT_BUNDLE_IDENTIFIER = com\.void\.daftrQarz;/PRODUCT_BUNDLE_IDENTIFIER = com.void.daftarQarz;/g; s/PRODUCT_BUNDLE_IDENTIFIER = com\.void\.daftr_qarz;/PRODUCT_BUNDLE_IDENTIFIER = com.void.daftarQarz;/g' "$PBXPROJ"
+          perl -0pi -e 's/(PRODUCT_BUNDLE_IDENTIFIER = com\.void\.daftarQarz;)/$1\n\t\t\t\tCODE_SIGN_ENTITLEMENTS = Runner\/Runner.entitlements;\n\t\t\t\tDEVELOPMENT_TEAM = TJSRQ2GZMU;/g' "$PBXPROJ"
+          perl -0pi -e 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]+;/IPHONEOS_DEPLOYMENT_TARGET = 15.5;/g' "$PBXPROJ"
+
+          if ! grep -q 'NSFaceIDUsageDescription' "$PLIST"; then
+            perl -0pi -e 's#</dict>#\t<key>NSFaceIDUsageDescription</key>\n\t<string>Why is my app authenticating using face id? locked app </string>\n</dict>#' "$PLIST"
+          fi
+
+          /usr/libexec/PlistBuddy -c 'Add :UIBackgroundModes array' "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c 'Add :UIBackgroundModes:0 string fetch' "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c 'Add :UIBackgroundModes:1 string remote-notification' "$PLIST" 2>/dev/null || true
+
+          cat > "$ENTITLEMENTS" <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>aps-environment</key>
+            <string>production</string>
+          </dict>
+          </plist>
+          EOF
+          cp "$FIREBASE_PLIST" ios/Runner/GoogleService-Info.plist
+
+      - name: Build final unsigned iOS app
+        working-directory: source
+        run: flutter build ios --release --no-codesign --no-tree-shake-icons --build-name=0.2.7 --build-number=25
+
+      - name: Restore canonical static bundle
+        working-directory: source
+        run: |
+          set -euo pipefail
+          unzip -oq ../native/ios/canonical-static-overlay.zip -d build/ios/iphoneos/Runner.app
+          cp firebase/GoogleService-Info.plist build/ios/iphoneos/Runner.app/GoogleService-Info.plist
+
+      - name: Verify and package final IPA
+        working-directory: source
+        run: |
+          set -euo pipefail
+          APP="build/ios/iphoneos/Runner.app"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")" = "com.void.daftarQarz"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")" = "0.2.7"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Info.plist")" = "25"
+
+          rm -rf build/final-ipa build/ipa-output
+          mkdir -p build/final-ipa/Payload build/ipa-output
+          cp -R "$APP" build/final-ipa/Payload/Runner.app
+          cp ios/Runner/Runner.entitlements build/ipa-output/Daftarqarzsafeen.entitlements.plist
+          (
+            cd build/final-ipa
+            zip -qry ../ipa-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa Payload
+          )
+          shasum -a 256 build/ipa-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa
+
+      - name: Upload final IPA artifact
+        id: artifact
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: Daftarqarzsafeen-0.2.7-build25-final
+          path: |
+            source/build/ipa-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa
+            source/build/ipa-output/Daftarqarzsafeen.entitlements.plist
+          if-no-files-found: error
+
+      - name: Publish release fallback
+        if: steps.artifact.outcome == 'failure'
+        working-directory: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="v0.2.7-build25-final"
+          IPA="build/ipa-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa"
+          ENT="build/ipa-output/Daftarqarzsafeen.entitlements.plist"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$IPA" "$ENT" --clobber
+          else
+            gh release create "$TAG" "$IPA" "$ENT"               --target "$GITHUB_SHA"               --title "Daftarqarzsafeen 0.2.7 build 25 final"               --notes "Final unsigned iOS build with separate Refresh and Search buttons."
+          fi

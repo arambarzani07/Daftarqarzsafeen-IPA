@@ -1,0 +1,59 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 58,
+      "path": "source/lib/services/backup_history_store.dart",
+      "blob": "encrypted/0058.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000003a",
+      "tag": "5f2b0183603c81680d83440e3cff75f3d4b09c7722b31399391296ccb93590fe",
+      "size": 2570
+    },
+    {
+      "index": 59,
+      "path": "source/lib/services/fib_service.dart",
+      "blob": "encrypted/0059.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000003b",
+      "tag": "f2c68a9cda62a65dd1eb75c2d8b2c7c642b1ad65089a40ce95299ad8a7a96163",
+      "size": 4216
+    },
+    {
+      "index": 60,
+      "path": "source/lib/services/legacy_api_client.dart",
+      "blob": "encrypted/0060.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000003c",
+      "tag": "5755829fca5a9af278bce3c1524e9d7265613ec72783622ffffb1f46a3d23b9c",
+      "size": 8668
+    },
+    {
+      "index": 61,
+      "path": "source/lib/services/local_backup_service.dart",
+      "blob": "encrypted/0061.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000003d",
+      "tag": "54406d95da34a75f772d1522a076f59706774ad4328e7a8e889be74521f6c002",
+      "size": 5760
+    },
+    {
+      "index": 62,
+      "path": "source/lib/services/notification_preferences_store.dart",
+      "blob": "encrypted/0062.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000003e",
+      "tag": "a1622e54b604ce957f0913365bb4e84ecdb184f5ce79458e549cbc24e7d1f63a",
+      "size": 2185
+    },
+    {
+      "index": 63,
+      "path": "source/lib/services/payment_promise_store.dart",
+      "blob": "encrypted/0063.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000003f",
+      "tag": "80f3fbc66727978b6308eb7467d3c83aaf86211ec4963ba978ac8cfeab351c12",
+      "size": 4230
+    }
+  ]
+}

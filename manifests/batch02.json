@@ -1,0 +1,41 @@
+{
+  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "files": [
+    {
+      "index": 8,
+      "path": "source/assets/images/voidLight.png",
+      "blob": "encrypted/0008.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000008",
+      "tag": "248c44b2eccc68c939eb8fdd6e7b9d654bd89ce8782c4ca96190194ea6061884",
+      "size": 22927
+    },
+    {
+      "index": 9,
+      "path": "source/assets/lang.json",
+      "blob": "encrypted/0009.bin",
+      "mode": "100644",
+      "nonce": "0473b4430000000000000009",
+      "tag": "e809f0865d5df3baf615a3d6bd71207cfadcbfd69a24a5ed6760648fd1389c60",
+      "size": 9703
+    },
+    {
+      "index": 10,
+      "path": "source/assets/svg/auto.svg",
+      "blob": "encrypted/0010.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000000a",
+      "tag": "2a0be8890d991accf165108d5a73cb18988c92272ec858b3cf6f94b2d72cbfb4",
+      "size": 7039
+    },
+    {
+      "index": 11,
+      "path": "source/assets/svg/eye_off.svg",
+      "blob": "encrypted/0011.bin",
+      "mode": "100644",
+      "nonce": "0473b443000000000000000b",
+      "tag": "1bb933d7cf253334481c6ab67f7a982c453ff287842ae4f028ce7ab158a9e0ed",
+      "size": 1702
+    }
+  ]
+}

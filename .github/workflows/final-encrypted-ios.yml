@@ -142,8 +142,7 @@ jobs:
             source/build/ipa-output/Daftarqarzsafeen.entitlements.plist
           if-no-files-found: error
 
-      - name: Publish release fallback
-        if: steps.artifact.outcome == 'failure'
+      - name: Publish final IPA release
         working-directory: source
         env:
           GH_TOKEN: ${{ github.token }}

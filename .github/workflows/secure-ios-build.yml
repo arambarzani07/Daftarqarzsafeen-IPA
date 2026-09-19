@@ -1,0 +1,224 @@
+name: Secure Daftarqarzsafeen iOS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Fetch private source with GitHub OIDC
+        shell: bash
+        env:
+          PAYLOAD_URL: https://uqbmujonrmxievyumkvx.supabase.co/functions/v1/daftar-secure-build-payload
+          EXPECTED_SOURCE_COMMIT: 9b3a9612319700290ed76669ab1f529085193cbf
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/daftar-secure"
+          rm -rf "$ROOT"
+          mkdir -p "$ROOT"
+
+          TOKEN="$(curl -fsSL             -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=daftarqarzsafeen-builder"             | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')"
+
+          OFFSET=0
+          TOTAL=0
+          while true; do
+            PAGE="$RUNNER_TEMP/payload-$OFFSET.json"
+            curl -fsSL               -H "Authorization: Bearer $TOKEN"               "$PAYLOAD_URL?offset=$OFFSET&limit=10"               -o "$PAGE"
+
+            python3 - "$PAGE" "$ROOT" "$EXPECTED_SOURCE_COMMIT" <<'PY'
+          import base64, json, os, pathlib, sys
+          page_path, root, expected = sys.argv[1:4]
+          data = json.load(open(page_path, "r", encoding="utf-8"))
+          if data.get("ok") is not True:
+              raise SystemExit("payload endpoint rejected request")
+          if data.get("source_commit") != expected:
+              raise SystemExit("source commit mismatch")
+          rootp = pathlib.Path(root).resolve()
+          for f in data.get("files", []):
+              rel = pathlib.PurePosixPath(f["path"])
+              if rel.is_absolute() or ".." in rel.parts:
+                  raise SystemExit("unsafe path")
+              dest = (rootp / pathlib.Path(*rel.parts)).resolve()
+              if rootp not in dest.parents and dest != rootp:
+                  raise SystemExit("path escape")
+              dest.parent.mkdir(parents=True, exist_ok=True)
+              dest.write_bytes(base64.b64decode(f["content_b64"]))
+          print(len(data.get("files", [])))
+          PY
+
+            COUNT="$(python3 - "$PAGE" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          print(len(d.get("files", [])))
+          PY
+          )"
+            TOTAL=$((TOTAL + COUNT))
+            DONE="$(python3 - "$PAGE" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          print("1" if d.get("done") else "0")
+          PY
+          )"
+            OFFSET="$(python3 - "$PAGE" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          print(d.get("next_offset", 0))
+          PY
+          )"
+            if [ "$DONE" = "1" ]; then
+              break
+            fi
+          done
+
+          test "$TOTAL" -eq 85
+          test -f "$ROOT/source/pubspec.yaml"
+          test -f "$ROOT/source/lib/screens/main_screen.dart"
+          test -f "$ROOT/native/ios/canonical-static-overlay.zip"
+          grep -q "Icons.refresh_rounded" "$ROOT/source/lib/screens/main_screen.dart"
+          grep -q "Icons.search_rounded" "$ROOT/source/lib/screens/main_screen.dart"
+          printf '%s\n' "$ROOT" > "$RUNNER_TEMP/daftar-root.txt"
+
+      - name: Get Flutter dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$(cat "$RUNNER_TEMP/daftar-root.txt")"
+          cd "$ROOT/source"
+          flutter pub get
+
+      - name: Generate iOS shell
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$(cat "$RUNNER_TEMP/daftar-root.txt")"
+          cd "$ROOT/source"
+          flutter create --platforms=ios --org com.void --project-name daftr_qarz .
+          rm -f test/widget_test.dart
+
+      - name: Restore iOS identity and capabilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$(cat "$RUNNER_TEMP/daftar-root.txt")"
+          cd "$ROOT/source"
+          PBXPROJ="ios/Runner.xcodeproj/project.pbxproj"
+          PLIST="ios/Runner/Info.plist"
+          ENTITLEMENTS="ios/Runner/Runner.entitlements"
+          FIREBASE_PLIST="firebase/GoogleService-Info.plist"
+
+          test -f "$FIREBASE_PLIST"
+          plutil -lint "$FIREBASE_PLIST"
+
+          perl -0pi -e 's/PRODUCT_BUNDLE_IDENTIFIER = com\.void\.daftrQarz;/PRODUCT_BUNDLE_IDENTIFIER = com.void.daftarQarz;/g; s/PRODUCT_BUNDLE_IDENTIFIER = com\.void\.daftr_qarz;/PRODUCT_BUNDLE_IDENTIFIER = com.void.daftarQarz;/g' "$PBXPROJ"
+          perl -0pi -e 's/(PRODUCT_BUNDLE_IDENTIFIER = com\.void\.daftarQarz;)/$1\n\t\t\t\tCODE_SIGN_ENTITLEMENTS = Runner\/Runner.entitlements;\n\t\t\t\tDEVELOPMENT_TEAM = TJSRQ2GZMU;/g' "$PBXPROJ"
+          perl -0pi -e 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]+;/IPHONEOS_DEPLOYMENT_TARGET = 15.5;/g' "$PBXPROJ"
+
+          if ! grep -q 'NSFaceIDUsageDescription' "$PLIST"; then
+            perl -0pi -e 's#</dict>#\t<key>NSFaceIDUsageDescription</key>\n\t<string>Why is my app authenticating using face id? locked app </string>\n</dict>#' "$PLIST"
+          fi
+
+          /usr/libexec/PlistBuddy -c 'Add :UIBackgroundModes array' "$PLIST" 2>/dev/null || true
+          if ! /usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes' "$PLIST" 2>/dev/null | grep -q 'fetch'; then
+            COUNT=$(/usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes' "$PLIST" 2>/dev/null | grep -c '^    ' || true)
+            /usr/libexec/PlistBuddy -c "Add :UIBackgroundModes:$COUNT string fetch" "$PLIST"
+          fi
+          if ! /usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes' "$PLIST" 2>/dev/null | grep -q 'remote-notification'; then
+            COUNT=$(/usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes' "$PLIST" 2>/dev/null | grep -c '^    ' || true)
+            /usr/libexec/PlistBuddy -c "Add :UIBackgroundModes:$COUNT string remote-notification" "$PLIST"
+          fi
+
+          cat > "$ENTITLEMENTS" <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>aps-environment</key>
+            <string>production</string>
+          </dict>
+          </plist>
+          EOF
+
+          cp "$FIREBASE_PLIST" ios/Runner/GoogleService-Info.plist
+
+      - name: Build final unsigned iOS app
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$(cat "$RUNNER_TEMP/daftar-root.txt")"
+          cd "$ROOT/source"
+          flutter build ios --release --no-codesign --no-tree-shake-icons --build-name=0.2.7 --build-number=25
+
+      - name: Restore canonical static bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$(cat "$RUNNER_TEMP/daftar-root.txt")"
+          cd "$ROOT/source"
+          unzip -oq ../native/ios/canonical-static-overlay.zip -d build/ios/iphoneos/Runner.app
+          cp firebase/GoogleService-Info.plist build/ios/iphoneos/Runner.app/GoogleService-Info.plist
+
+      - name: Verify final bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$(cat "$RUNNER_TEMP/daftar-root.txt")"
+          cd "$ROOT/source"
+          APP="build/ios/iphoneos/Runner.app"
+          test -d "$APP"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")" = "com.void.daftarQarz"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")" = "0.2.7"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Info.plist")" = "25"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :BUNDLE_ID' "$APP/GoogleService-Info.plist")" = "com.void.daftarQarz"
+
+      - name: Package final IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$(cat "$RUNNER_TEMP/daftar-root.txt")"
+          cd "$ROOT/source"
+          rm -rf build/final-ipa build/final-output
+          mkdir -p build/final-ipa/Payload build/final-output
+          cp -R build/ios/iphoneos/Runner.app build/final-ipa/Payload/Runner.app
+          cp ios/Runner/Runner.entitlements build/final-output/Daftarqarzsafeen.entitlements.plist
+          (
+            cd build/final-ipa
+            zip -qry ../final-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa Payload
+          )
+          printf '%s\n' "9b3a9612319700290ed76669ab1f529085193cbf" > build/final-output/source-commit.txt
+          unzip -t build/final-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa
+          shasum -a 256 build/final-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa | tee build/final-output/sha256.txt
+
+      - name: Publish final IPA release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ROOT="$(cat "$RUNNER_TEMP/daftar-root.txt")"
+          cd "$ROOT/source"
+          TAG="v0.2.7-build25-final"
+          FILES=(
+            "build/final-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa"
+            "build/final-output/Daftarqarzsafeen.entitlements.plist"
+            "build/final-output/source-commit.txt"
+            "build/final-output/sha256.txt"
+          )
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${FILES[@]}" --clobber
+          else
+            gh release create "$TAG" "${FILES[@]}"               --target "$GITHUB_SHA"               --title "Daftarqarzsafeen 0.2.7 build 25 final"               --notes "Unsigned final IPA built from private source commit 9b3a9612319700290ed76669ab1f529085193cbf. Includes distinct Refresh and Search buttons."
+          fi

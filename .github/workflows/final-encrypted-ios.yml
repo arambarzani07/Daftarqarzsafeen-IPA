@@ -107,7 +107,7 @@ jobs:
 
       - name: Build final unsigned iOS app
         working-directory: source
-        run: flutter build ios --release --no-codesign --no-tree-shake-icons --build-name=0.2.7 --build-number=27
+        run: flutter build ios --release --no-codesign --no-tree-shake-icons --build-name=0.2.8 --build-number=28
 
       - name: Restore canonical static bundle
         working-directory: source
@@ -122,8 +122,8 @@ jobs:
           set -euo pipefail
           APP="build/ios/iphoneos/Runner.app"
           test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")" = "com.void.daftarQarz"
-          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")" = "0.2.7"
-          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Info.plist")" = "27"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")" = "0.2.8"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Info.plist")" = "28"
 
           rm -rf build/final-ipa build/ipa-output
           mkdir -p build/final-ipa/Payload build/ipa-output
@@ -131,18 +131,18 @@ jobs:
           cp ios/Runner/Runner.entitlements build/ipa-output/Daftarqarzsafeen.entitlements.plist
           (
             cd build/final-ipa
-            zip -qry ../ipa-output/Daftarqarzsafeen-0.2.7-build27-final-unsigned.ipa Payload
+            zip -qry ../ipa-output/Daftarqarzsafeen-0.2.8-build28-final-unsigned.ipa Payload
           )
-          shasum -a 256 build/ipa-output/Daftarqarzsafeen-0.2.7-build27-final-unsigned.ipa
+          shasum -a 256 build/ipa-output/Daftarqarzsafeen-0.2.8-build28-final-unsigned.ipa
 
       - name: Upload final IPA artifact
         id: artifact
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: Daftarqarzsafeen-0.2.7-build27-final
+          name: Daftarqarzsafeen-0.2.8-build28-final
           path: |
-            source/build/ipa-output/Daftarqarzsafeen-0.2.7-build27-final-unsigned.ipa
+            source/build/ipa-output/Daftarqarzsafeen-0.2.8-build28-final-unsigned.ipa
             source/build/ipa-output/Daftarqarzsafeen.entitlements.plist
           if-no-files-found: error
 
@@ -152,8 +152,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG="v0.2.7-build27-final"
-          IPA="build/ipa-output/Daftarqarzsafeen-0.2.7-build27-final-unsigned.ipa"
+          TAG="v0.2.8-build28-final"
+          IPA="build/ipa-output/Daftarqarzsafeen-0.2.8-build28-final-unsigned.ipa"
           ENT="build/ipa-output/Daftarqarzsafeen.entitlements.plist"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$IPA" "$ENT" --clobber

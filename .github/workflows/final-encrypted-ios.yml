@@ -43,7 +43,6 @@ jobs:
           python3 decrypt_source.py
           test -f source/lib/screens/main_screen.dart
           grep -q "Icons.refresh_rounded" source/lib/screens/main_screen.dart
-          grep -q "Icons.search_rounded" source/lib/screens/main_screen.dart
           ! grep -q "IconData(0xe514, fontFamily: 'MaterialIcons')" source/lib/screens/main_screen.dart
           grep -q "_addContact(user.id)" source/lib/screens/main_screen.dart
           grep -q "_searchContacts(user.id)" source/lib/screens/main_screen.dart

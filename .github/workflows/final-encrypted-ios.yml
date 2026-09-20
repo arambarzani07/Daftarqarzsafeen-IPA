@@ -45,6 +45,11 @@ jobs:
           grep -q "Icons.refresh_rounded" source/lib/screens/main_screen.dart
           grep -q "Icons.search_rounded" source/lib/screens/main_screen.dart
           ! grep -q "IconData(0xe514, fontFamily: 'MaterialIcons')" source/lib/screens/main_screen.dart
+          grep -q "_addContact(user.id)" source/lib/screens/main_screen.dart
+          grep -q "_searchContacts(user.id)" source/lib/screens/main_screen.dart
+          grep -q "_showSettingsSheet(settings)" source/lib/screens/main_screen.dart
+          grep -q "_openContact(contact, user.id)" source/lib/screens/main_screen.dart
+          test "$(wc -c < source/lib/screens/main_screen.dart)" -ge 50000
 
       - uses: subosito/flutter-action@v2
         with:
@@ -103,7 +108,7 @@ jobs:
 
       - name: Build final unsigned iOS app
         working-directory: source
-        run: flutter build ios --release --no-codesign --no-tree-shake-icons --build-name=0.2.7 --build-number=25
+        run: flutter build ios --release --no-codesign --no-tree-shake-icons --build-name=0.2.7 --build-number=26
 
       - name: Restore canonical static bundle
         working-directory: source
@@ -119,7 +124,7 @@ jobs:
           APP="build/ios/iphoneos/Runner.app"
           test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")" = "com.void.daftarQarz"
           test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")" = "0.2.7"
-          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Info.plist")" = "25"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Info.plist")" = "26"
 
           rm -rf build/final-ipa build/ipa-output
           mkdir -p build/final-ipa/Payload build/ipa-output
@@ -127,18 +132,18 @@ jobs:
           cp ios/Runner/Runner.entitlements build/ipa-output/Daftarqarzsafeen.entitlements.plist
           (
             cd build/final-ipa
-            zip -qry ../ipa-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa Payload
+            zip -qry ../ipa-output/Daftarqarzsafeen-0.2.7-build26-final-unsigned.ipa Payload
           )
-          shasum -a 256 build/ipa-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa
+          shasum -a 256 build/ipa-output/Daftarqarzsafeen-0.2.7-build26-final-unsigned.ipa
 
       - name: Upload final IPA artifact
         id: artifact
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: Daftarqarzsafeen-0.2.7-build25-final
+          name: Daftarqarzsafeen-0.2.7-build26-final
           path: |
-            source/build/ipa-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa
+            source/build/ipa-output/Daftarqarzsafeen-0.2.7-build26-final-unsigned.ipa
             source/build/ipa-output/Daftarqarzsafeen.entitlements.plist
           if-no-files-found: error
 
@@ -148,11 +153,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG="v0.2.7-build25-final"
-          IPA="build/ipa-output/Daftarqarzsafeen-0.2.7-build25-final-unsigned.ipa"
+          TAG="v0.2.7-build26-final"
+          IPA="build/ipa-output/Daftarqarzsafeen-0.2.7-build26-final-unsigned.ipa"
           ENT="build/ipa-output/Daftarqarzsafeen.entitlements.plist"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$IPA" "$ENT" --clobber
           else
-            gh release create "$TAG" "$IPA" "$ENT"               --target "$GITHUB_SHA"               --title "Daftarqarzsafeen 0.2.7 build 25 final"               --notes "Final unsigned iOS build with separate Refresh and Search buttons."
+            gh release create "$TAG" "$IPA" "$ENT"               --target "$GITHUB_SHA"               --title "Daftarqarzsafeen 0.2.7 build 26 final"               --notes "Final unsigned iOS build with separate Refresh and Search buttons."
           fi

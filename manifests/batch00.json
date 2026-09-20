@@ -1,5 +1,5 @@
 {
-  "source_commit": "4d6796b6e09b5666c0e82bad69aee02d36083cbd",
+  "source_commit": "620b7b05d43a860693d1996ef0b8dd97122e7db6",
   "files": [
     {
       "index": 0,
@@ -34,8 +34,8 @@
       "blob": "encrypted/0003.bin",
       "mode": "100644",
       "nonce": "0473b4430000000000000003",
-      "tag": "21b6e9790d7f58d1d0669205e2290de85ab4e133dba763698dd12d917d8bb521",
-      "size": 6028
+      "tag": "60d62284fb9201e436f6187d6a73c55ebdacecabb0de68ae9307bc558e27e82d",
+      "size": 31308
     }
   ]
 }
